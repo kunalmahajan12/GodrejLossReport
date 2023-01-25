@@ -1,0 +1,6 @@
+xlsxwriter
+dateutil.parser
+datetime
+flask_cors 
+flask
+mysql.connector
