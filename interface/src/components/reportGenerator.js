@@ -23,6 +23,8 @@ const ReportGenerator=()=>{
         ShiftIsHidden: false,
         Week: "1",
         WeekIsHidden: true,
+        ToDate: new Date(),
+        CustomDate:false
     })
     
     
@@ -48,6 +50,7 @@ const ReportGenerator=()=>{
                 MonthIsHidden: false,
                 YearIsHidden: false,
                 ReportTypeIsHidden: true,
+                CustomDate:false,
             }))
         }
         else{
@@ -62,6 +65,7 @@ const ReportGenerator=()=>{
                 YearIsHidden: true,
                 MonthIsHidden: true,
                 WeekIsHidden: true,
+                CustomDate:false
             }))
         }
 
@@ -81,6 +85,7 @@ const ReportGenerator=()=>{
                 YearIsHidden: true,
                 MonthIsHidden: true,
                 WeekIsHidden: true,
+                CustomDate: false
             }))
         }
         else if(event.target.value==='Daily'){
@@ -91,7 +96,8 @@ const ReportGenerator=()=>{
                 YearIsHidden: true,
                 MonthIsHidden: true,
                 WeekIsHidden: true,
-                ShiftIsHidden: true
+                ShiftIsHidden: true,
+                CustomDate: false
             }))
         }
         else if (event.target.value==='Weekly'){
@@ -103,7 +109,8 @@ const ReportGenerator=()=>{
                 YearIsHidden: false,
                 MonthIsHidden: true,
                 WeekIsHidden: false,
-                ShiftIsHidden: true
+                ShiftIsHidden: true,
+                CustomDate: false
             }))
         }
         else if (event.target.value==='Monthly'){
@@ -114,6 +121,20 @@ const ReportGenerator=()=>{
                 DateIsHidden: true,
                 YearIsHidden: false,
                 MonthIsHidden: false,
+                WeekIsHidden: true,
+                ShiftIsHidden: true,
+                CustomDate: false
+            }))
+        }
+        else if (event.target.value==='Custom'){
+            setCriteria(prevState=>({
+                ...prevState,
+                Date: new Date(),
+                ToDate: new Date(),
+                CustomDate: true,
+                DateIsHidden: false,
+                YearIsHidden: true,
+                MonthIsHidden: true,
                 WeekIsHidden: true,
                 ShiftIsHidden: true
             }))
@@ -153,6 +174,12 @@ const ReportGenerator=()=>{
         setCriteria(prevState=>({
             ...prevState,
             Shift: event.target.value
+        }))
+    }
+    const handleToDateChange=(date)=>{
+        setCriteria(prevState=>({
+            ...prevState,
+            ToDate:date
         }))
     }
     const handleSubmit=(event)=> {
@@ -224,6 +251,7 @@ const ReportGenerator=()=>{
                             <option value="Daily">Daily</option>
                             <option value="Weekly">Weekly</option>
                             <option value="Monthly">Monthly</option>
+                            <option value="Custom">Custom</option>
                         </select>
                     </div>}
                 </Card.Body>
@@ -261,7 +289,7 @@ const ReportGenerator=()=>{
                     
                     {!criteria.DateIsHidden&&
                     <div>
-                        <Card.Subtitle>Date</Card.Subtitle>
+                        <Card.Subtitle>{criteria&&'From '}Date</Card.Subtitle>
                         <DatePicker value={criteria.Date} onChange={handleDateChange} className="w" clearIcon={null}/>
                     </div>}
                     {!criteria.ShiftIsHidden&&
@@ -288,6 +316,12 @@ const ReportGenerator=()=>{
                         <Card.Subtitle>Week</Card.Subtitle>
                         <input type="text" name="week" value={criteria.Week} onChange={handleWeekChange} className="w"/>
                     </div>}
+                    {criteria.CustomDate&&
+                    <div>
+                        <Card.Subtitle>To Date</Card.Subtitle>
+                        <DatePicker value={criteria.ToDate} onChange={handleToDateChange} className="w" clearIcon={null}/>
+                    </div>
+                    }
                 </Card.Body>
             </Card>
             
