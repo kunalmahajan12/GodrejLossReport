@@ -9,8 +9,11 @@ import io
 import xlsxwriter
 import dateutil.parser
 from string import Template
-
-downloadDirectory="/Users/kunalmahajan/College 4th year/freelance project/Interface/interfaceBackend/Reports"
+import os
+currentDirectory=os.path.dirname(__file__)
+print (currentDirectory)
+downloadDirectory=currentDirectory+"/Reports"
+print(downloadDirectory)
 
 class DeltaTemplate(Template):
     delimiter = '%'
@@ -66,10 +69,10 @@ def ReportGenerator(machine,spt,stt,ReportName,StatusTag,AlarmTag,st,ReportType,
     result=result+mgmtResult
     result.sort()
     print(result)
-    workbook= xlsxwriter.Workbook(f"Reports/{ReportName}")
+    workbook= xlsxwriter.Workbook(currentDirectory+f"/Reports/{ReportName}")
     worksheet=workbook.add_worksheet(f"{machine}")
     #Header
-    worksheet.insert_image('B1', 'Resources/logoGodrej.png')
+    worksheet.insert_image('B1', currentDirectory+'/Resources/logoGodrej.png')
     cell_format = workbook.add_format({
         'align': 'center',
     })
@@ -197,10 +200,13 @@ def ReportGenerator(machine,spt,stt,ReportName,StatusTag,AlarmTag,st,ReportType,
     totalDuration=timedelta(days=0,hours=0,minutes=0,seconds=0)
     mngmtLossDuration=timedelta(days=0,hours=0,minutes=0,seconds=0)
     downReason=[]
+    startDate=spt
+    startDate-=timedelta(hours=spt.hour-6,minutes=spt.minute,seconds=spt.second)
+    print(startDate)
     # TotalTime= stt-spt
     for row in result:
         if (st=="var"):
-            tup=row[1]-spt
+            tup=row[1]-startDate
             counter=int(tup/shiftsize)
             if (shiftcount==-1):
                 shiftcount=counter
@@ -315,12 +321,121 @@ def summary(machine,ReportType,Shift,Date,ToDate,Week,Year,Month,statusTag,alarm
         ReportName=f"Report_{Month}{Year}.xlsx"
         return ReportGenerator(machine,spt,stt,ReportName,statusTag,alarmTag,"var",ReportType,Line)
     elif(ReportType=='Custom'):
-        spt=Date+timedelta(hours=6, minutes=0, seconds=0)
-        stt=ToDate+timedelta( hours=30,minutes=0, seconds=0)
+        spt=Date
+        stt=ToDate
         spt= spt.replace(tzinfo=None)
         ReportName=f"Report_{machine}_{Date}_{ToDate}.xlsx"
         return ReportGenerator(machine, spt,stt,ReportName,statusTag,alarmTag,"var",ReportType,Line)
     return ""
+
+def OleReport(Month,Year):
+    workbook= xlsxwriter.Workbook("Reports/Ole.xlsx")
+    worksheet=workbook.add_worksheet("shift")
+    worksheet.write(9,0,'Paticulars (SKU-1 gm)')
+    worksheet.write(10,0,'varient 1')
+    worksheet.write(11,0,'machine design speet for machine 5 & machine 6')
+    worksheet.write(12,0,'machine design speet for machine 7 & machine 8')
+    worksheet.write(13,0,'Average Design Speed')
+    worksheet.write(14,0,'Shift time (SKU wise)')
+    worksheet.write(16,0,'Downtime analysis (excluded from OEE calcutlation) ')
+    worksheet.write(17,0,'Legal --> National/gazatted holiday')
+    worksheet.write(18,0,'Managment Loss --> No plan/Sanitasation/Startu up & Shut Down Loss/Power faliure')
+    worksheet.write(19,0,'Man Power Shortage --> Man Power Shortage')
+    worksheet.write(20,0,'RM/PM/SSFA not available --> RM/PM Shortage')
+    worksheet.write(21,0,'Changeover-->SKU Changeover')
+    worksheet.write(22,0,'Changeover-->Color Changeover')
+    worksheet.write(23,0,'Preventive Maintance --> Planned Condition maintance, CLIT, JH')
+    worksheet.write(24,0,'Total machine stoppage due to managment loss (min)')
+    worksheet.write(25,0,'Total machine stoppage includeing changeover, manpower & RM/PM shortage')
+    worksheet.write(26,0,'Equipment Breakdown Details (Before Bar Cutter)- To be included in OEE Calulation')
+    worksheet.write(27,0,'Breakdown Time of Mixer (in min)')
+    worksheet.write(29,0,'Equipment Breakdown Details (From Bar Cutter) >10 minutes- To be included in OEE')
+    worksheet.write(30,0,'Breakdown Time of Bar-Cutter-III(in min)')
+    worksheet.write(31,0,'Breakdown Time of Bar-Cutter-IV(in min)')
+    worksheet.write(33,0,'Breakdown Time of Stamping Machine-III(in min)')
+    worksheet.write(34,0,'Breakdown Time of Stamping Machine-IV(in min)')
+    worksheet.write(36,0,'Breakdown Time of Wrapping Machine-V(in min)')
+    worksheet.write(37,0,'Breakdown Time of Wrapping Machine-VI(in min)')
+    worksheet.write(38,0,'Breakdown Time of Wrapping Machine-VII(in min)')
+    worksheet.write(39,0,'Breakdown Time of Wrapping Machine-VIII(in min)')
+    worksheet.write(41,0,'Breakdown Time of Banding Machine-I(in min)')
+    worksheet.write(42,0,'Breakdown Time of Banding Machine-II(in min)')
+    worksheet.write(44,0,'Total Breakdown (min)')
+    worksheet.write(46,0,'Equipment Breakdown Details (From Bar Cutter) <=10 minutes')
+    worksheet.write(47,0,'Minor Stoppage Breakdown Time of Stamping Machine-III(in min)')
+    worksheet.write(48,0,'Minor Stoppage Breakdown Time of Stamping Machine-IV(in min)')
+    worksheet.write(49,0,'Minor Stoppage Breakdown Time of Wrapping Machine-V(in min)')
+    worksheet.write(50,0,'Minor Stoppage Breakdown Time of Wrapping Machine-VI(in min)')
+    worksheet.write(51,0,'Minor Stoppage Breakdown Time of Wrapping Machine-VII(in min)')
+    worksheet.write(52,0,'Minor Stoppage Breakdown Time of Wrapping Machine-VIII(in min)')
+    worksheet.write(54,0,'Total Minor Stoppage (min)')
+    worksheet.write(56,0,'Total Run Time of Wrapping Machine-V (in min)')
+    worksheet.write(57,0,'Total Run Time of Wrapping Machine-VI (in min)')
+    worksheet.write(58,0,'Total Run Time of Wrapping Machine-VII (in min)')
+    worksheet.write(59,0,'Total Run Time of Wrapping Machine-VIII (in min)')
+    worksheet.write(60,0,'Average run time of wrapping machine (4 nos.)')
+    worksheet.write(62,0,'Run time of wrapping machines (includein mgmt losses- changeover, RM PM shortage, manpower)')
+    worksheet.write(63,0,'Total Run Time of Wrapping Machine-V (in min)')
+    worksheet.write(64,0,'Total Run Time of Wrapping Machine-VI (in min)')
+    worksheet.write(65,0,'Total Run Time of Wrapping Machine-VII (in min)')
+    worksheet.write(66,0,'Total Run Time of Wrapping Machine-VIII (in min)')
+    worksheet.write(67,0,'Average run time of wrapping machine (4 nos.)')
+    worksheet.write(69,0,'Production Data')
+    worksheet.write(70,0,'Bar Output from Cutter-III')
+    worksheet.write(71,0,'Bar Output from Cutter-IV')
+    worksheet.write(72,0,'Output Cakes at Wrapping Machine-V (in Nos)')
+    worksheet.write(73,0,'Output Cakes at Wrapping Machine-VI (in Nos)')
+    worksheet.write(74,0,'Output Cakes at Wrapping Machine-VII (in Nos)')
+    worksheet.write(75,0,'Output Cakes at Wrapping Machine-VIII (in Nos)')
+    worksheet.write(76,0,'Total Output Cakes of Wrapping Machine (4 Nos)')
+    worksheet.write(78,0,'Final Production Output Wrapping Machine-V in MT')
+    worksheet.write(79,0,'Final Production Output Wrapping Machine-VI in MT')
+    worksheet.write(80,0,'Final Production Output Wrapping Machine-VII in MT')
+    worksheet.write(81,0,'Final Production Output Wrapping Machine-VIII in MT')
+    worksheet.write(83,0,'TOTAL WRAPPING PRODUCTION (MT)')
+    worksheet.write(84,0,'Total Quantity Recycled at Wrapping Machine-V in MT')
+    worksheet.write(85,0,'Total Quantity Recycled at Wrapping Machine-VI in MT')
+    worksheet.write(86,0,'Total Quantity Recycled at Wrapping Machine-VII in MT')
+    worksheet.write(87,0,'Total Quantity Recycled at Wrapping Machine-VIII in MT')
+    worksheet.write(88,0,'Total Quantity Recycled at Wrapping Machines')
+    worksheet.write(90,0,'Total Quantity Recycled at Banding Machine-I in MT')
+    worksheet.write(91,0,'Total Quantity Recycled at Banding Machine-II in MT')
+    worksheet.write(92,0,'Total Quantity Recycled at Banding in MT')
+    worksheet.write(94,0,'Total Line Production (MT)')
+    worksheet.write(96,0,'Check Production in MT')
+    MonthStart=datetime.datetime(Year,Month,1,6,0,0)
+    MonthEnd=datetime.datetime(Year,Month,6,0,0)
+    if (Month==12):
+        MonthEnd=datetime.datetime(Year+1,Month,1,6,0,0)
+    else:
+        MonthEnd=datetime.datetime(Year,Month+1,1,6,0,0)
+    NoOfDays=MonthEnd-MonthStart
+    idx=1
+    for day in range(NoOfDays.days):
+        for shift in range(3):
+            if (shift==0):
+                Shift='A'
+                StartTime=datetime.datetime(Year,Month,1+day,6,0,0)
+                EndTime=datetime.datetime(Year,Month,1+day,14,0,0)
+            elif(shift==1):
+                Shift='B'
+                StartTime=datetime.datetime(Year,Month,1+day,14,0,0)
+                EndTime=datetime.datetime(Year,Month,1+day,22,0,0)
+            else:
+                Shift='C'
+                StartTime=datetime.datetime(Year,Month,1+day,22,0,0)
+                if (day!=NoOfDays.days-1):
+                    EndTime=datetime.datetime(Year,Month,2+day,6,0,0)
+                else:
+                    EndTime=datetime.datetime(Year,Month+1,1,6,0,0)
+            Date=MonthStart+timedelta(days=day)
+            worksheet.write(7,idx,Date.strftime('%d-%b'))
+            worksheet.write(8,idx,Shift)
+            idx+=1
+    workbook.close()
+    path='Reports/Ole.xlsx'
+    return send_file(path)
+            
 
 @app.route("/lossReport", methods=["POST"])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
@@ -348,6 +463,8 @@ def report():
     Month=Month.month
     print(Month)
     Week=int(Week)
+    if (Report=='OLEReport'):
+        return OleReport(Month,Year)
     if (Machine=='Banding1'):
         return summary(Machine.lower(),ReportType,Shift,Date,ToDate,Week,Year,Month,4,11,Line)
     elif (Machine=='Banding2'):

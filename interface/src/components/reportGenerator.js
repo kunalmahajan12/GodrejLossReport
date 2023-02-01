@@ -2,6 +2,7 @@ import axios from "axios";
 import React, {useState} from "react";
 import FileDownload from 'js-file-download'
 import DatePicker from 'react-date-picker';
+import DateTimePicker from 'react-datetime-picker'
 import Card from 'react-bootstrap/Card';
 
 
@@ -290,7 +291,7 @@ const ReportGenerator=()=>{
                     {!criteria.DateIsHidden&&
                     <div>
                         <Card.Subtitle>{criteria&&'From '}Date</Card.Subtitle>
-                        <DatePicker value={criteria.Date} onChange={handleDateChange} className="w" clearIcon={null}/>
+                        <DateTimePicker value={criteria.Date} onChange={handleDateChange} {...(criteria.CustomDate===false?{format:"y-MM-dd"}:{disableClock:'true', format:"y-MM-dd HH:mm:ss"})} className="w" clearIcon={null}/>
                     </div>}
                     {!criteria.ShiftIsHidden&&
                     <div>
@@ -304,7 +305,7 @@ const ReportGenerator=()=>{
                     {!criteria.YearIsHidden&&
                     <div>
                         <Card.Subtitle>Year</Card.Subtitle>
-                        <DatePicker onChange={handleYearChange} value={criteria.Year} format="y" disabled={criteria.YearIsHidden} className="w"/>
+                        <DatePicker onChange={handleYearChange} value={criteria.Year}  maxDetail='decade' format="y" disabled={criteria.YearIsHidden} className="w"/>
                     </div>}
                     {!criteria.MonthIsHidden&&
                     <div>
@@ -319,7 +320,7 @@ const ReportGenerator=()=>{
                     {criteria.CustomDate&&
                     <div>
                         <Card.Subtitle>To Date</Card.Subtitle>
-                        <DatePicker value={criteria.ToDate} onChange={handleToDateChange} className="w" clearIcon={null}/>
+                        <DateTimePicker value={criteria.ToDate} onChange={handleToDateChange} disableClock='true' format="y-MM-dd HH:mm:ss" className="w" clearIcon={null}/>
                     </div>
                     }
                 </Card.Body>

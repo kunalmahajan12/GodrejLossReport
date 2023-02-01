@@ -1,1 +1,6 @@
 /interfaceBackend/Reports
+/interfaceBackend/build
+/interfaceBackend/dist
+/interfaceBackend/.venv
+/interfaceBackend/app.spec
+/lossReport
